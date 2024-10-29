@@ -36,7 +36,8 @@ def run():
         angle_z += 0.01
 
         # Renderiza el objeto 3D
-        renderer3d.render_obj(obj.vertices, obj.faces, angle_x, angle_y, angle_z)
+        #renderer3d.render_obj(obj.vertices, obj.faces, angle_x, angle_y, angle_z)
+        renderer3d.fill_obj(obj.vertices, obj.faces, angle_x, angle_y, angle_z)
 
         # Actualiza la pantalla
         renderer.present()
