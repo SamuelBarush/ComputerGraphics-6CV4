@@ -152,8 +152,8 @@ def run():
         # Renderiza el cubo en vista perspectiva (rotando)
         render_cube(renderer, vertices, edges, faces, angle_x, angle_y, angle_z, perspective=True)
 
-        # Renderiza el cubo en vista ortogonal (fija) en la esquina superior derecha
-        #render_cube(renderer, vertices, edges, faces, math.pi / 6, math.pi / 6, 0, perspective=False)
+        # Renderiza el cubo en vista ortogonal (fija)
+        render_cube(renderer, vertices, edges, faces, math.pi / 6, math.pi / 6, 0, perspective=False)
 
         # Actualiza la pantalla
         renderer.present()
