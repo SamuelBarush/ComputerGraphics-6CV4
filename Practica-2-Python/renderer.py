@@ -88,18 +88,6 @@ class Renderer3D:
             x_start += m1
             x_end += m2
 
-    def render_obj(self, vertices, faces, angle_x, angle_y, angle_z):
-        # Rota y proyecta los vértices
-        transformed_vertices = [self.rotate_vertex(v, angle_x, angle_y, angle_z) for v in vertices]
-        projected_vertices = [self.project_vertex(v) for v in transformed_vertices]
-
-        # Dibuja las caras visibles
-        for face in faces:
-            for i in range(3):
-                v1 = projected_vertices[face[i]]
-                v2 = projected_vertices[face[(i + 1) % 3]]
-                Bresenham.draw_line(v1[0], v1[1], v2[0], v2[1], self.renderer, sdl2.ext.Color(255, 255, 255))
-
     def fill_obj (self, vertices, faces, angle_x, angle_y, angle_z):
         # Rota y proyecta los vértices
         transformed_vertices = [self.rotate_vertex(v, angle_x, angle_y, angle_z) for v in vertices]
@@ -114,3 +102,15 @@ class Renderer3D:
             v2 = projected_vertices[face[2]]
 
             self.split_triangle(v0,v1,v2)
+
+    def render_obj(self, vertices, faces, angle_x, angle_y, angle_z):
+        # Rota y proyecta los vértices
+        transformed_vertices = [self.rotate_vertex(v, angle_x, angle_y, angle_z) for v in vertices]
+        projected_vertices = [self.project_vertex(v) for v in transformed_vertices]
+
+        # Dibuja las caras visibles
+        for face in faces:
+            for i in range(3):
+                v1 = projected_vertices[face[i]]
+                v2 = projected_vertices[face[(i + 1) % 3]]
+                Bresenham.draw_line(v1[0], v1[1], v2[0], v2[1], self.renderer, sdl2.ext.Color(255, 255, 255))
