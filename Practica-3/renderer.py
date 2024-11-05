@@ -61,23 +61,41 @@ class Renderer3D:
                 x_end = self.interpolateX(v1,v3,y)
                 self.drawScanLine(y,x_start,x_end)
 
-    def interpolateX(v_start,v_end,y):
+    def interpolateX(self,v_start,v_end,y):
         dy  = v_end[1] - v_start[1]
         dx = v_end[0] - v_start[0]
-        return v_start + dx * ((y - v_start[1]) / dy)
+        return v_start[0] + dx * ((y - v_start[1]) / dy)
     
     def drawScanLine(self,y,x_start,x_end):
         for x in range (int(x_start),int(x_end)):
             self.renderer.draw_point((x, y), sdl2.ext.Color(255, 255, 0))
 
-    def render_obj(self, vertices, faces, angle_x, angle_y, angle_z):
+    def fill_obj(self, vertices, faces, angle_x, angle_y, angle_z):
         # Rota y proyecta los vértices
         transformed_vertices = [self.rotate_vertex(v, angle_x, angle_y, angle_z) for v in vertices]
         projected_vertices = [self.project_vertex(v) for v in transformed_vertices]
 
         # Dibuja las caras visibles
         for face in faces:
-            v1
+            v1 = projected_vertices[face[0]]
+            v2 = projected_vertices[face[1]]
+            v3 = projected_vertices[face[2]]
+            self.render_triangle(v1, v2, v3)
+
+    def draw_circle(self, center, radius, color):
+        x_center, y_center = center
+        for x in range(-radius, radius + 1):
+            for y in range(-radius, radius + 1):
+                if x * x + y * y <= radius * radius:  # Verifica si el punto está dentro del círculo
+                    self.renderer.draw_point((x_center + x, y_center + y), color)
+
+    def draw_vertices(self, vertices, angle_x, angle_y, angle_z):
+        transformed_vertices = [self.rotate_vertex(v, angle_x, angle_y, angle_z) for v in vertices]
+        projected_vertices = [self.project_vertex(v) for v in transformed_vertices]
+
+        radius = 5  # Tamaño del círculo que representa el vértice
+        for v in projected_vertices:
+            self.draw_circle((v[0], v[1]), radius, sdl2.ext.Color(255, 0, 0))  # Dibuja un círculo rojo alrededor del vértice
 
     def render_obj(self, vertices, faces, angle_x, angle_y, angle_z):
         # Rota y proyecta los vértices
