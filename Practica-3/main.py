@@ -15,11 +15,13 @@ def run():
     # Carga el archivo .obj
     obj = OBJLoader('cube.obj')
 
-    # Configuración inicial
-    renderer3d = Renderer3D(renderer, 800, 600, 500, 5)
-    angle_x = 0
-    angle_y = 0
-    angle_z = 0
+    # Caras
+    print("Caras del Cubo")
+    print(obj.faces)
+
+    # Vértices
+    print("Vértices del Cubo")
+    print(obj.vertices)
 
     # Estados para las funciones
     draw_edges = False
@@ -41,19 +43,6 @@ def run():
 
         # Limpia la pantalla
         renderer.clear(sdl2.ext.Color(0, 0, 0))
-
-        # Aumenta los ángulos de rotación
-        angle_x += 0.01
-        angle_y += 0.01
-        angle_z += 0.01
-
-        # Renderiza el objeto 3D
-        if draw_edges:
-            renderer3d.render_obj(obj.vertices, obj.faces, angle_x, angle_y, angle_z)  # Dibuja las aristas
-        if color_faces:
-            renderer3d.fill_obj(obj.vertices, obj.faces, angle_x, angle_y, angle_z)  # Colorea las caras
-        if draw_vertices:
-            renderer3d.draw_vertices(obj.vertices, angle_x, angle_y, angle_z)  # Dibuja los vértices (deberás implementar esto)
 
         # Actualiza la pantalla
         renderer.present()
