@@ -95,7 +95,13 @@ def run():
         if draw_edges:
             Render.render(obj.faces,vertices,renderer)
 
+        # Dibuja los vértices
+        if draw_vertices:
+            Render.draw_vertices(vertices,renderer)
 
+        # Dibuja las caras
+        if color_faces:
+            Render.Render_Triangle(obj.faces,vertices,renderer)
 
         angle_x += 0.01
         angle_y += 0.01
