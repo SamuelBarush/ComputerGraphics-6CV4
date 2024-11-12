@@ -20,6 +20,14 @@ class Render:
                 if x**2 + y**2 <= radius**2:
                     renderer.draw_point((x_center + x, y_center + y), color)
 
+    def draw_ellipse(center,rx,ry,color,rendered):
+        x_center = center[0]
+        y_center = center[1]
+        for x in range(-rx,rx + 1):
+            for y in range(-ry,ry + 1):
+                if (x/rx)**2 + (y/ry)**2 <= 1:
+                    rendered.draw_point((x_center + x, y_center + y), color)
+
     def draw_vertices(vertices,renderer):
         for v in vertices:
             #renderer.draw_point((v[0], v[1]), sdl2.ext.Color(255, 255, 255))

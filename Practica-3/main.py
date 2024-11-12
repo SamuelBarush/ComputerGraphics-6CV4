@@ -40,8 +40,6 @@ def update(obj,angle_x, angle_y, angle_z):
     transformed_vertices = []
 
     for v in obj.vertices:
-        #v_homogeneous = np.array([v[0], v[1], v[2], 1])
-        #transformed = Matrix_Transformation @ v_homogeneous
         vector4d = Vector.convert3d_to_4d(v)
         vector4d = Matrix.matrix_vector_product(Matrix_Transformation, vector4d)
         vector3d = Vector.convert4d_to_3d(vector4d)
@@ -103,6 +101,13 @@ def run():
         if color_faces:
             Render.Render_Triangle(obj.faces,vertices,renderer)
 
+        #Dibujar Circunferencias
+        #Render.draw_circle((400, 300), 100, sdl2.ext.Color(255, 255, 255), renderer)
+
+        # Dibujar Elipses
+        #Render.draw_ellipse((400, 300), 100, 50, sdl2.ext.Color(255, 255, 255), renderer)
+
+        # Actualiza los ángulos
         angle_x += 0.01
         angle_y += 0.01
         angle_z += 0.01
@@ -110,7 +115,7 @@ def run():
         # Actualiza la pantalla
         renderer.present()
 
-        # Espera para mantener el FPS
+        # Espera para mantener el Frame Rate
         sdl2.SDL_Delay(int(1000 / FPS))
 
     sdl2.ext.quit()
