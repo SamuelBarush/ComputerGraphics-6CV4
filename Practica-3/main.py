@@ -98,8 +98,9 @@ def run():
             Render.draw_vertices(vertices,renderer)
 
         # Dibuja las caras
-        if color_faces:
-            Render.Render_Triangle(obj.faces,vertices,renderer)
+        #if color_faces:
+        Render.DrawFilledTriangle(obj.faces,vertices,renderer)
+
 
         #Dibujar Circunferencias
         #Render.draw_circle((400, 300), 100, sdl2.ext.Color(255, 255, 255), renderer)
