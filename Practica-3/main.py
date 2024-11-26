@@ -14,7 +14,6 @@ DISTANCE = 5
 WIDTH = 800
 HEIGHT = 600
 
-
 def project(v, fov, distance, width, height):
     x = v[0]
     y = v[1]
@@ -25,11 +24,10 @@ def project(v, fov, distance, width, height):
     y_2d = int(-y * factor + height // 2)  # Proyecta la coordenada Y
     return np.array([x_2d, y_2d])
 
-def update(obj,angle_x, angle_y, angle_z):
-
+def update(obj, angle_x, angle_y, angle_z):
     translation = (0, 0, 0)
 
-    Matrix_scaled = Matrix.scaling_matrix(1,1,1)
+    Matrix_scaled = Matrix.scaling_matrix(1, 1, 1)
     Matrix_rotated_x = Matrix.rotation_matrix_x(angle_x)
     Matrix_rotated_y = Matrix.rotation_matrix_y(angle_y)
     Matrix_rotated_z = Matrix.rotation_matrix_z(angle_z)
@@ -46,7 +44,7 @@ def update(obj,angle_x, angle_y, angle_z):
         vector2d = project(vector3d, FOV, DISTANCE, WIDTH, HEIGHT)
 
         transformed_vertices.append(vector2d)
-    
+
     return transformed_vertices
 
 def run():
@@ -67,7 +65,7 @@ def run():
 
     # Estados para las funciones
     draw_edges = False
-    color_faces = False
+    color_faces = True  # Habilitar el coloreado de las caras
     draw_vertices = False
 
     while running:
@@ -87,26 +85,21 @@ def run():
         renderer.clear(sdl2.ext.Color(0, 0, 0))
 
         # Actualiza los vértices
-        vertices = update(obj,angle_x, angle_y, angle_z)
+        vertices = update(obj, angle_x, angle_y, angle_z)
 
         # Dibuja las aristas
         if draw_edges:
-            Render.render(obj.faces,vertices,renderer)
+            Render.render(obj.faces, vertices, renderer)
 
         # Dibuja los vértices
         if draw_vertices:
-            Render.draw_vertices(vertices,renderer)
+            Render.draw_vertices(vertices, renderer)
 
         # Dibuja las caras
-        #if color_faces:
-        Render.DrawFilledTriangle(obj.faces,vertices,renderer)
-
-
-        #Dibujar Circunferencias
-        #Render.draw_circle((400, 300), 100, sdl2.ext.Color(255, 255, 255), renderer)
-
-        # Dibujar Elipses
-        #Render.draw_ellipse((400, 300), 100, 50, sdl2.ext.Color(255, 255, 255), renderer)
+        if color_faces:
+            print("Vertices:")
+            print(vertices)
+            Render.DrawFilledTriangle(obj.faces, vertices, renderer)
 
         # Actualiza los ángulos
         angle_x += 0.01
