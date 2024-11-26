@@ -1,5 +1,6 @@
 import sdl2.ext
 import numpy as np
+from Vector_class import Vector
 from Bresenham_class import Bresenham
 
 class Render:
@@ -39,6 +40,26 @@ class Render:
     
     def draw_line(x1, y1, x2, y2, renderer, color):
         Bresenham.draw_line(x1, y1, x2, y2, renderer, color)
+
+
+    def backface_culling(v0, v1, v2):
+        # Calcular el vector normal
+        vA = Vector.convert2d_to_3d(v0)
+        vB = Vector.convert2d_to_3d(v1)
+        vC = Vector.convert2d_to_3d(v2)
+        vAB = vB - vA
+        vAC = vC - vA
+        n = np.cross(vAB, vAC)
+
+        # Calcular el vector de la cámara entre el punto del triangulo y la cámara
+        camera = np.array([0, 0, 5])
+        cameraRay = vA - camera
+
+        # Calcular el producto punto
+        dot_product = np.dot(n, cameraRay)
+
+        return dot_product <= 0
+
 
     def FillFlatBottomTriangle(v1, v2, v3, color, renderer):
         x0, y0 = v1
@@ -100,6 +121,10 @@ class Render:
             v0 = vertices[v1_index]
             v1 = vertices[v2_index]
             v2 = vertices[v3_index]
+
+
+            if not Render.backface_culling(v0, v1, v2):
+                continue
 
             # Ordenar los vértices por coordenada Y
             vertices_sorted = sorted([v0, v1, v2], key=lambda v: v[1])

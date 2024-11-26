@@ -65,7 +65,7 @@ def run():
 
     # Estados para las funciones
     draw_edges = False
-    color_faces = True  # Habilitar el coloreado de las caras
+    color_faces = False
     draw_vertices = False
 
     while running:
@@ -97,8 +97,6 @@ def run():
 
         # Dibuja las caras
         if color_faces:
-            print("Vertices:")
-            print(vertices)
             Render.DrawFilledTriangle(obj.faces, vertices, renderer)
 
         # Actualiza los ángulos
