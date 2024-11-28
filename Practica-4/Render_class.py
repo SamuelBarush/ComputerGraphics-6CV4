@@ -59,9 +59,12 @@ class Render:
 
     def backface_culling(v0, v1, v2):
         # Calcular el vector normal
-        vA = Vector.convert2d_to_3d(v0)
-        vB = Vector.convert2d_to_3d(v1)
-        vC = Vector.convert2d_to_3d(v2)
+        #vA = Vector.convert2d_to_3d(v0)
+        #vB = Vector.convert2d_to_3d(v1)
+        #vC = Vector.convert2d_to_3d(v2)
+        vA = v0
+        vB = v1
+        vC = v2
         vAB = vB - vA
         vAC = vC - vA
         n = np.cross(vAB, vAC)
@@ -130,21 +133,12 @@ class Render:
             Bresenham.draw_line(int(x_start), int(y), int(x_end), int(y), renderer, color)
 
 
-    def DrawFilledTriangle(faces, vertices, renderer):
-        i = 0
-        for face in faces:
+    def DrawFilledTriangle(vertices, renderer):
+        for face in vertices:
             v1_index, v2_index, v3_index = face[:3]
             v0 = vertices[v1_index]
             v1 = vertices[v2_index]
             v2 = vertices[v3_index]
-
-            print("Cara No. ", i)
-            print("Vertice 1: ", v0)
-            print("Vertice 2: ", v1)
-            print("Vertice 3: ", v2)
-            print()
-
-            i += 1
 
             if not Render.backface_culling(v0, v1, v2):
                 continue

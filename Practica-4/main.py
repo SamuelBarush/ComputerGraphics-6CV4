@@ -37,15 +37,42 @@ def update(obj, angle_x, angle_y, angle_z):
 
     transformed_vertices = []
 
-    for v in obj.vertices:
-        vector4d = Vector.convert3d_to_4d(v)
-        vector4d = Matrix.matrix_vector_product(Matrix_Transformation, vector4d)
-        vector3d = Vector.convert4d_to_3d(vector4d)
-        vector2d = project(vector3d, FOV, DISTANCE, WIDTH, HEIGHT)
+    for face in obj.faces:
+        v1_index, v2_index, v3_index = face[:3]
+        v0 = obj.vertices[v1_index]
+        v1 = obj.vertices[v2_index]
+        v2 = obj.vertices[v3_index]
 
-        transformed_vertices.append(vector2d)
+        if not Render.backface_culling(v0, v1, v2):
+            continue
 
+        vector4d_0 = Vector.convert3d_to_4d(v0)
+        vector4d_1 = Vector.convert3d_to_4d(v1)
+        vector4d_2 = Vector.convert3d_to_4d(v2)
+        vector4d_0 = Matrix.matrix_vector_product(Matrix_Transformation, vector4d_0)
+        vector4d_1 = Matrix.matrix_vector_product(Matrix_Transformation, vector4d_1)
+        vector4d_2 = Matrix.matrix_vector_product(Matrix_Transformation, vector4d_2)
+        vector3d_0 = Vector.convert4d_to_3d(vector4d_0)
+        vector3d_1 = Vector.convert4d_to_3d(vector4d_1)
+        vector3d_2 = Vector.convert4d_to_3d(vector4d_2)
+        vector2d_0 = project(vector3d_0, FOV, DISTANCE, WIDTH, HEIGHT)
+        vector2d_1 = project(vector3d_1, FOV, DISTANCE, WIDTH, HEIGHT)
+        vector2d_2 = project(vector3d_2, FOV, DISTANCE, WIDTH, HEIGHT)
+        transformed_vertices.append(vector2d_0)
+        transformed_vertices.append(vector2d_1)
+        transformed_vertices.append(vector2d_2)
+        
     return transformed_vertices
+
+    #for v in obj.vertices:
+    #    vector4d = Vector.convert3d_to_4d(v)
+    #    vector4d = Matrix.matrix_vector_product(Matrix_Transformation, vector4d)
+    #    vector3d = Vector.convert4d_to_3d(vector4d)
+    #    vector2d = project(vector3d, FOV, DISTANCE, WIDTH, HEIGHT)
+
+    #    transformed_vertices.append(vector2d)
+
+    #return transformed_vertices
 
 def run():
     sdl2.ext.init()
@@ -97,7 +124,7 @@ def run():
 
         # Dibuja las caras
         if color_faces:
-            Render.DrawFilledTriangle(obj.faces, vertices, renderer)
+            Render.DrawFilledTriangle(vertices, renderer)
 
         # Actualiza los ángulos
         angle_x += 0.01
