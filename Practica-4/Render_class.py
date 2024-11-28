@@ -42,6 +42,21 @@ class Render:
         Bresenham.draw_line(x1, y1, x2, y2, renderer, color)
 
 
+    #Calcular Internsidad de Luz para la cara
+    #RGB * Intensidad
+    #Modelos de Iluminación
+    #Sombreados
+    #Flat Shading -> Ha implementar (Todas las caras deben tener el mismo color) Presionar Tecla S
+    #Gouraud Shading -> Ha implementar (Interpolar el color de los vertices) Presionar Tecla G
+    #Phong Shading -> Ha implementar (Interpolar el color de los pixeles) Presionar Tecla P
+    #Modelo de Iluminación de Phong
+        #Calcular el vector normal en cada vertice
+        #Calcular la intensidad en cada vertice usando algun modelo de iluminación
+        #Se interpola la intensidad de cada pixel de la cara
+
+        #Vector Normal del vertice son la suma de los vectores normales de las caras que comparten el vertice
+
+
     def backface_culling(v0, v1, v2):
         # Calcular el vector normal
         vA = Vector.convert2d_to_3d(v0)
@@ -116,12 +131,20 @@ class Render:
 
 
     def DrawFilledTriangle(faces, vertices, renderer):
+        i = 0
         for face in faces:
             v1_index, v2_index, v3_index = face[:3]
             v0 = vertices[v1_index]
             v1 = vertices[v2_index]
             v2 = vertices[v3_index]
 
+            print("Cara No. ", i)
+            print("Vertice 1: ", v0)
+            print("Vertice 2: ", v1)
+            print("Vertice 3: ", v2)
+            print()
+
+            i += 1
 
             if not Render.backface_culling(v0, v1, v2):
                 continue
@@ -131,14 +154,14 @@ class Render:
             v0, v1, v2 = vertices_sorted
 
             if v1[1] == v2[1]:  # Triángulo con base plana inferior
-                Render.FillFlatBottomTriangle(v0, v1, v2, sdl2.ext.Color(255, 0, 0), renderer)
+                Render.FillFlatBottomTriangle(v0, v1, v2, sdl2.ext.Color(255, 150, 0), renderer)
             elif v0[1] == v1[1]:  # Triángulo con base plana superior
-                Render.FillFlatTopTriangle(v0, v1, v2, sdl2.ext.Color(0, 255, 0), renderer)
+                Render.FillFlatTopTriangle(v0, v1, v2, sdl2.ext.Color(0, 255, 150), renderer)
             else:  # Triángulo general
                 # Dividir en dos triángulos
                 mx = v0[0] + (v1[1] - v0[1]) * (v2[0] - v0[0]) / (v2[1] - v0[1])
                 my = v1[1]
                 v_split = (mx, my)
 
-                Render.FillFlatBottomTriangle(v0, v1, v_split, sdl2.ext.Color(255, 0, 0), renderer)
-                Render.FillFlatTopTriangle(v_split, v1, v2, sdl2.ext.Color(0, 255, 0), renderer)
+                Render.FillFlatBottomTriangle(v0, v1, v_split, sdl2.ext.Color(255, 150, 0), renderer)
+                Render.FillFlatTopTriangle(v_split, v1, v2, sdl2.ext.Color(0, 255, 150), renderer)
