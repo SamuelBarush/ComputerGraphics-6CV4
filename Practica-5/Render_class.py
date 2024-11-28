@@ -150,13 +150,13 @@ class Render:
 
 
     def DrawFilledTriangle(faces, vertices, renderer, color):
+        i = 0
         for face in faces:
             v1_index, v2_index, v3_index = face[:3]
             v0 = vertices[v1_index]
             v1 = vertices[v2_index]
             v2 = vertices[v3_index]
 
-            i = 0
             color_light = color[i]
             i += 1
 

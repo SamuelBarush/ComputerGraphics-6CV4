@@ -145,8 +145,8 @@ def run():
             Render.draw_vertices(vertices, renderer)
 
         # Dibuja las caras
-        if color_faces:
-            Render.DrawFilledTriangle(visible_faces, vertices, renderer, color)
+        #if color_faces:
+        Render.DrawFilledTriangle(visible_faces, vertices, renderer, color)
 
         # Actualiza los ángulos
         angle_x += 0.01
