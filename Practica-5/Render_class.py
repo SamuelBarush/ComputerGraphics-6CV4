@@ -12,9 +12,9 @@ class Render:
             v2 = vertices[v2_index]
             v3 = vertices[v3_index]
 
-            Bresenham.draw_line(v1[0], v1[1], v2[0], v2[1], renderer, sdl2.ext.Color(0, 0, 0))
-            Bresenham.draw_line(v2[0], v2[1], v3[0], v3[1], renderer, sdl2.ext.Color(0, 0, 0))
-            Bresenham.draw_line(v3[0], v3[1], v1[0], v1[1], renderer, sdl2.ext.Color(0, 0, 0))
+            Bresenham.draw_line(v1[0], v1[1], v2[0], v2[1], renderer, sdl2.ext.Color(255, 0, 0))
+            Bresenham.draw_line(v2[0], v2[1], v3[0], v3[1], renderer, sdl2.ext.Color(255, 0, 0))
+            Bresenham.draw_line(v3[0], v3[1], v1[0], v1[1], renderer, sdl2.ext.Color(255, 0, 0))
 
             # for i in range(len(face)):
             #     v1_index = face[i]
@@ -74,17 +74,25 @@ class Render:
         vA = v0
         vB = v1
         vC = v2
+
+        # Calcular los vectores
         vAB = vB - vA
         vAC = vC - vA
+
+        # Calcular el producto cruz
         n = np.cross(vAB, vAC)
+
+        # Normalizar el vector
+        n = Vector.normalize3d(n)
 
         # Calcular el vector de la cámara entre el punto del triangulo y la cámara
         cameraRay = vA - camera
 
         # Calcular el producto punto
         dot_product = np.dot(n, cameraRay)
+        dot_product = Vector.normalize3d(dot_product)
 
-        return dot_product <= 0
+        return dot_product < 0
 
 
     def FillFlatBottomTriangle(v1, v2, v3, color, renderer):
@@ -141,12 +149,16 @@ class Render:
             Bresenham.draw_line(int(x_start), int(y), int(x_end), int(y), renderer, color)
 
 
-    def DrawFilledTriangle(faces, vertices, renderer):
+    def DrawFilledTriangle(faces, vertices, renderer, color):
         for face in faces:
             v1_index, v2_index, v3_index = face[:3]
             v0 = vertices[v1_index]
             v1 = vertices[v2_index]
             v2 = vertices[v3_index]
+
+            i = 0
+            color_light = color[i]
+            i += 1
 
             # if not Render.backface_culling(v0, v1, v2):
             #     continue
@@ -156,14 +168,14 @@ class Render:
             v0, v1, v2 = vertices_sorted
 
             if v1[1] == v2[1]:  # Triángulo con base plana inferior
-                Render.FillFlatBottomTriangle(v0, v1, v2, sdl2.ext.Color(255, 255, 255), renderer)
+                Render.FillFlatBottomTriangle(v0, v1, v2, sdl2.ext.Color(color_light[0], color_light[1], color_light[2]), renderer)
             elif v0[1] == v1[1]:  # Triángulo con base plana superior
-                Render.FillFlatTopTriangle(v0, v1, v2, sdl2.ext.Color(255, 255, 255), renderer)
+                Render.FillFlatTopTriangle(v0, v1, v2, sdl2.ext.Color(color_light[0], color_light[1], color_light[2]), renderer)
             else:  # Triángulo general
                 # Dividir en dos triángulos
                 mx = v0[0] + (v1[1] - v0[1]) * (v2[0] - v0[0]) / (v2[1] - v0[1])
                 my = v1[1]
                 v_split = (mx, my)
 
-                Render.FillFlatBottomTriangle(v0, v1, v_split, sdl2.ext.Color(255, 255, 255), renderer)
-                Render.FillFlatTopTriangle(v_split, v1, v2, sdl2.ext.Color(255, 255, 255), renderer)
+                Render.FillFlatBottomTriangle(v0, v1, v_split, sdl2.ext.Color(color_light[0], color_light[1], color_light[2]), renderer)
+                Render.FillFlatTopTriangle(v_split, v1, v2, sdl2.ext.Color(color_light[0], color_light[1], color_light[2]), renderer)

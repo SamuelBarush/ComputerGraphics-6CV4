@@ -6,6 +6,7 @@ from OBJLoader import OBJLoader
 from Matrix_class import Matrix
 from Vector_class import Vector
 from Render_class import Render
+from Light_class import Ligth
 
 FOV = 120
 FPS = 60
@@ -24,8 +25,9 @@ def project(v, fov, distance, width, height):
     y_2d = int(-y * factor + height // 2)  # Proyecta la coordenada Y
     return np.array([x_2d, y_2d])
 
-def update(obj, angle_x, angle_y, angle_z , camera):
+def update(obj, angle_x, angle_y, angle_z , camera, light):
     translation = (0, 0, 0)
+    color = (255, 255, 255)
 
     Matrix_scaled = Matrix.scaling_matrix(1, 1, 1)
     Matrix_rotated_x = Matrix.rotation_matrix_x(angle_x)
@@ -37,6 +39,7 @@ def update(obj, angle_x, angle_y, angle_z , camera):
 
     transformed_vertices = []
     visible_faces = []
+    new_color = []
 
     for face in obj.faces:
         v1_index, v2_index, v3_index = face[:3]
@@ -58,6 +61,11 @@ def update(obj, angle_x, angle_y, angle_z , camera):
         transformed_v3 = Vector.convert4d_to_3d(transformed_v3)
 
         if Render.backface_culling(transformed_v1, transformed_v2, transformed_v3, camera):
+           # Aplicar Flat Shading
+            # Calcular el vector normal de la cara
+            normal = Ligth.CalculateNormal(transformed_v1, transformed_v2, transformed_v3)
+            color = Ligth.ApplyFlatShading(normal, color, light)
+
            # Agregar los vértices transformados de la cara visible
             # Proyecta los vértices transformados a 2D
             projected_v1 = project(transformed_v1, FOV, DISTANCE, WIDTH, HEIGHT)
@@ -71,8 +79,9 @@ def update(obj, angle_x, angle_y, angle_z , camera):
 
             # Agregar la cara a las caras visibles
             visible_faces.append([len(transformed_vertices)-3, len(transformed_vertices)-2, len(transformed_vertices)-1]) 
+            new_color.append(color)
         
-    return transformed_vertices, visible_faces
+    return transformed_vertices, visible_faces , new_color
 
     # for v in obj.vertices:
     #    vector4d = Vector.convert3d_to_4d(v)
@@ -101,6 +110,7 @@ def run():
     angle_z = 0
 
     camera = np.array([0, 0, -5])  # Posición de la cámara
+    light = np.array([0, 0, 1])  # Posición de la luz
 
     # Estados para las funciones
     draw_edges = False
@@ -124,7 +134,7 @@ def run():
         renderer.clear(sdl2.ext.Color(0, 0, 0))
 
         # Actualiza los vértices
-        vertices , visible_faces = update(obj, angle_x, angle_y, angle_z, camera)
+        vertices , visible_faces , color = update(obj, angle_x, angle_y, angle_z, camera, light)
 
         # Dibuja las aristas
         if draw_edges:
@@ -136,7 +146,7 @@ def run():
 
         # Dibuja las caras
         if color_faces:
-            Render.DrawFilledTriangle(visible_faces, vertices, renderer)
+            Render.DrawFilledTriangle(visible_faces, vertices, renderer, color)
 
         # Actualiza los ángulos
         angle_x += 0.01

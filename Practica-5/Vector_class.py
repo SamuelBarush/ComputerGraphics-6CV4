@@ -2,7 +2,6 @@ import numpy as np
 
 class Vector:
     @staticmethod
-
     def convert2d_to_3d(v):
         return np.array([v[0], v[1], 0])
 
@@ -11,4 +10,10 @@ class Vector:
     
     def convert4d_to_3d(v):
         return np.array([v[0], v[1], v[2]])
+    
+    def normalize2d(v):
+        return v / np.linalg.norm(v)
+    
+    def normalize3d(v):
+        return v / np.linalg.norm(v)
     
