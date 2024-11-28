@@ -24,7 +24,7 @@ def project(v, fov, distance, width, height):
     y_2d = int(-y * factor + height // 2)  # Proyecta la coordenada Y
     return np.array([x_2d, y_2d])
 
-def update(obj, angle_x, angle_y, angle_z):
+def update(obj, angle_x, angle_y, angle_z , camera):
     translation = (0, 0, 0)
 
     Matrix_scaled = Matrix.scaling_matrix(1, 1, 1)
@@ -57,7 +57,7 @@ def update(obj, angle_x, angle_y, angle_z):
         transformed_v3 = Matrix.matrix_vector_product(Matrix_Transformation, transformed_v3)
         transformed_v3 = Vector.convert4d_to_3d(transformed_v3)
 
-        if Render.backface_culling(transformed_v1, transformed_v2, transformed_v3):
+        if Render.backface_culling(transformed_v1, transformed_v2, transformed_v3, camera):
            # Agregar los vértices transformados de la cara visible
             # Proyecta los vértices transformados a 2D
             projected_v1 = project(transformed_v1, FOV, DISTANCE, WIDTH, HEIGHT)
@@ -100,6 +100,8 @@ def run():
     angle_y = 0
     angle_z = 0
 
+    camera = np.array([0, 0, -5])  # Posición de la cámara
+
     # Estados para las funciones
     draw_edges = False
     color_faces = False
@@ -122,7 +124,7 @@ def run():
         renderer.clear(sdl2.ext.Color(0, 0, 0))
 
         # Actualiza los vértices
-        vertices , visible_faces = update(obj, angle_x, angle_y, angle_z)
+        vertices , visible_faces = update(obj, angle_x, angle_y, angle_z, camera)
 
         # Dibuja las aristas
         if draw_edges:

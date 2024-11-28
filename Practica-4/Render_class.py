@@ -12,9 +12,9 @@ class Render:
             v2 = vertices[v2_index]
             v3 = vertices[v3_index]
 
-            Bresenham.draw_line(v1[0], v1[1], v2[0], v2[1], renderer, sdl2.ext.Color(255, 255, 255))
-            Bresenham.draw_line(v2[0], v2[1], v3[0], v3[1], renderer, sdl2.ext.Color(255, 255, 255))
-            Bresenham.draw_line(v3[0], v3[1], v1[0], v1[1], renderer, sdl2.ext.Color(255, 255, 255))
+            Bresenham.draw_line(v1[0], v1[1], v2[0], v2[1], renderer, sdl2.ext.Color(0, 0, 0))
+            Bresenham.draw_line(v2[0], v2[1], v3[0], v3[1], renderer, sdl2.ext.Color(0, 0, 0))
+            Bresenham.draw_line(v3[0], v3[1], v1[0], v1[1], renderer, sdl2.ext.Color(0, 0, 0))
 
             # for i in range(len(face)):
             #     v1_index = face[i]
@@ -66,7 +66,7 @@ class Render:
         #Vector Normal del vertice son la suma de los vectores normales de las caras que comparten el vertice
 
 
-    def backface_culling(v0, v1, v2):
+    def backface_culling(v0, v1, v2, camera):
         # Calcular el vector normal
         # vA = Vector.convert2d_to_3d(v0)
         # vB = Vector.convert2d_to_3d(v1)
@@ -79,7 +79,6 @@ class Render:
         n = np.cross(vAB, vAC)
 
         # Calcular el vector de la cámara entre el punto del triangulo y la cámara
-        camera = np.array([0, 0, -5])
         cameraRay = vA - camera
 
         # Calcular el producto punto
@@ -157,14 +156,14 @@ class Render:
             v0, v1, v2 = vertices_sorted
 
             if v1[1] == v2[1]:  # Triángulo con base plana inferior
-                Render.FillFlatBottomTriangle(v0, v1, v2, sdl2.ext.Color(255, 150, 0), renderer)
+                Render.FillFlatBottomTriangle(v0, v1, v2, sdl2.ext.Color(255, 255, 255), renderer)
             elif v0[1] == v1[1]:  # Triángulo con base plana superior
-                Render.FillFlatTopTriangle(v0, v1, v2, sdl2.ext.Color(0, 255, 150), renderer)
+                Render.FillFlatTopTriangle(v0, v1, v2, sdl2.ext.Color(255, 255, 255), renderer)
             else:  # Triángulo general
                 # Dividir en dos triángulos
                 mx = v0[0] + (v1[1] - v0[1]) * (v2[0] - v0[0]) / (v2[1] - v0[1])
                 my = v1[1]
                 v_split = (mx, my)
 
-                Render.FillFlatBottomTriangle(v0, v1, v_split, sdl2.ext.Color(255, 150, 0), renderer)
-                Render.FillFlatTopTriangle(v_split, v1, v2, sdl2.ext.Color(0, 255, 150), renderer)
+                Render.FillFlatBottomTriangle(v0, v1, v_split, sdl2.ext.Color(255, 255, 255), renderer)
+                Render.FillFlatTopTriangle(v_split, v1, v2, sdl2.ext.Color(255, 255, 255), renderer)

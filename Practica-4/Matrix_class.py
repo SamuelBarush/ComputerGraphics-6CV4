@@ -1,6 +1,5 @@
 import numpy as np
 
-
 class Matrix:
     @staticmethod
     def identity_matrix():
