@@ -7,12 +7,21 @@ class Render:
     @staticmethod
     def render(faces, vertices, renderer):
         for face in faces:
-            for i in range(len(face)):
-                v1_index = face[i]
-                v2_index = face[(i+1)%len(face)]
-                v1 = vertices[v1_index]
-                v2 = vertices[v2_index]
-                Bresenham.draw_line(v1[0], v1[1], v2[0], v2[1], renderer, sdl2.ext.Color(255, 255, 255))
+            v1_index, v2_index, v3_index = face[:3]
+            v1 = vertices[v1_index]
+            v2 = vertices[v2_index]
+            v3 = vertices[v3_index]
+
+            Bresenham.draw_line(v1[0], v1[1], v2[0], v2[1], renderer, sdl2.ext.Color(255, 255, 255))
+            Bresenham.draw_line(v2[0], v2[1], v3[0], v3[1], renderer, sdl2.ext.Color(255, 255, 255))
+            Bresenham.draw_line(v3[0], v3[1], v1[0], v1[1], renderer, sdl2.ext.Color(255, 255, 255))
+
+            # for i in range(len(face)):
+            #     v1_index = face[i]
+            #     v2_index = face[(i+1)%len(face)]
+            #     v1 = vertices[v1_index]
+            #     v2 = vertices[v2_index]
+            #     Bresenham.draw_line(v1[0], v1[1], v2[0], v2[1], renderer, sdl2.ext.Color(255, 255, 255))
     
     def draw_circle(center, radius, color, renderer):
         x_center = center[0]
@@ -59,9 +68,9 @@ class Render:
 
     def backface_culling(v0, v1, v2):
         # Calcular el vector normal
-        #vA = Vector.convert2d_to_3d(v0)
-        #vB = Vector.convert2d_to_3d(v1)
-        #vC = Vector.convert2d_to_3d(v2)
+        # vA = Vector.convert2d_to_3d(v0)
+        # vB = Vector.convert2d_to_3d(v1)
+        # vC = Vector.convert2d_to_3d(v2)
         vA = v0
         vB = v1
         vC = v2
@@ -70,7 +79,7 @@ class Render:
         n = np.cross(vAB, vAC)
 
         # Calcular el vector de la cámara entre el punto del triangulo y la cámara
-        camera = np.array([0, 0, 5])
+        camera = np.array([0, 0, -5])
         cameraRay = vA - camera
 
         # Calcular el producto punto
@@ -133,15 +142,15 @@ class Render:
             Bresenham.draw_line(int(x_start), int(y), int(x_end), int(y), renderer, color)
 
 
-    def DrawFilledTriangle(vertices, renderer):
-        for face in vertices:
+    def DrawFilledTriangle(faces, vertices, renderer):
+        for face in faces:
             v1_index, v2_index, v3_index = face[:3]
             v0 = vertices[v1_index]
             v1 = vertices[v2_index]
             v2 = vertices[v3_index]
 
-            if not Render.backface_culling(v0, v1, v2):
-                continue
+            # if not Render.backface_culling(v0, v1, v2):
+            #     continue
 
             # Ordenar los vértices por coordenada Y
             vertices_sorted = sorted([v0, v1, v2], key=lambda v: v[1])

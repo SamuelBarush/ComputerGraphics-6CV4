@@ -36,35 +36,45 @@ def update(obj, angle_x, angle_y, angle_z):
     Matrix_Transformation = Matrix_translated @ Matrix_rotated_x @ Matrix_rotated_y @ Matrix_rotated_z @ Matrix_scaled
 
     transformed_vertices = []
+    visible_faces = []
 
     for face in obj.faces:
         v1_index, v2_index, v3_index = face[:3]
-        v0 = obj.vertices[v1_index]
-        v1 = obj.vertices[v2_index]
-        v2 = obj.vertices[v3_index]
+        v1 = obj.vertices[v1_index]
+        v2 = obj.vertices[v2_index]
+        v3 = obj.vertices[v3_index]
 
-        if not Render.backface_culling(v0, v1, v2):
-            continue
-
-        vector4d_0 = Vector.convert3d_to_4d(v0)
-        vector4d_1 = Vector.convert3d_to_4d(v1)
-        vector4d_2 = Vector.convert3d_to_4d(v2)
-        vector4d_0 = Matrix.matrix_vector_product(Matrix_Transformation, vector4d_0)
-        vector4d_1 = Matrix.matrix_vector_product(Matrix_Transformation, vector4d_1)
-        vector4d_2 = Matrix.matrix_vector_product(Matrix_Transformation, vector4d_2)
-        vector3d_0 = Vector.convert4d_to_3d(vector4d_0)
-        vector3d_1 = Vector.convert4d_to_3d(vector4d_1)
-        vector3d_2 = Vector.convert4d_to_3d(vector4d_2)
-        vector2d_0 = project(vector3d_0, FOV, DISTANCE, WIDTH, HEIGHT)
-        vector2d_1 = project(vector3d_1, FOV, DISTANCE, WIDTH, HEIGHT)
-        vector2d_2 = project(vector3d_2, FOV, DISTANCE, WIDTH, HEIGHT)
-        transformed_vertices.append(vector2d_0)
-        transformed_vertices.append(vector2d_1)
-        transformed_vertices.append(vector2d_2)
+        # Transforma cada vértice de la cara visible
+        transformed_v1 = Vector.convert3d_to_4d(v1)
+        transformed_v1 = Matrix.matrix_vector_product(Matrix_Transformation, transformed_v1)
+        transformed_v1 = Vector.convert4d_to_3d(transformed_v1)
         
-    return transformed_vertices
+        transformed_v2 = Vector.convert3d_to_4d(v2)
+        transformed_v2 = Matrix.matrix_vector_product(Matrix_Transformation, transformed_v2)
+        transformed_v2 = Vector.convert4d_to_3d(transformed_v2)
+        
+        transformed_v3 = Vector.convert3d_to_4d(v3)
+        transformed_v3 = Matrix.matrix_vector_product(Matrix_Transformation, transformed_v3)
+        transformed_v3 = Vector.convert4d_to_3d(transformed_v3)
 
-    #for v in obj.vertices:
+        if Render.backface_culling(transformed_v1, transformed_v2, transformed_v3):
+           # Agregar los vértices transformados de la cara visible
+            # Proyecta los vértices transformados a 2D
+            projected_v1 = project(transformed_v1, FOV, DISTANCE, WIDTH, HEIGHT)
+            projected_v2 = project(transformed_v2, FOV, DISTANCE, WIDTH, HEIGHT)
+            projected_v3 = project(transformed_v3, FOV, DISTANCE, WIDTH, HEIGHT)
+
+            # Agregar los vértices proyectados a la lista
+            transformed_vertices.append(projected_v1)
+            transformed_vertices.append(projected_v2)
+            transformed_vertices.append(projected_v3)
+
+            # Agregar la cara a las caras visibles
+            visible_faces.append([len(transformed_vertices)-3, len(transformed_vertices)-2, len(transformed_vertices)-1]) 
+        
+    return transformed_vertices, visible_faces
+
+    # for v in obj.vertices:
     #    vector4d = Vector.convert3d_to_4d(v)
     #    vector4d = Matrix.matrix_vector_product(Matrix_Transformation, vector4d)
     #    vector3d = Vector.convert4d_to_3d(vector4d)
@@ -72,7 +82,7 @@ def update(obj, angle_x, angle_y, angle_z):
 
     #    transformed_vertices.append(vector2d)
 
-    #return transformed_vertices
+    # return transformed_vertices
 
 def run():
     sdl2.ext.init()
@@ -112,11 +122,11 @@ def run():
         renderer.clear(sdl2.ext.Color(0, 0, 0))
 
         # Actualiza los vértices
-        vertices = update(obj, angle_x, angle_y, angle_z)
+        vertices , visible_faces = update(obj, angle_x, angle_y, angle_z)
 
         # Dibuja las aristas
         if draw_edges:
-            Render.render(obj.faces, vertices, renderer)
+            Render.render(visible_faces, vertices, renderer)
 
         # Dibuja los vértices
         if draw_vertices:
@@ -124,7 +134,7 @@ def run():
 
         # Dibuja las caras
         if color_faces:
-            Render.DrawFilledTriangle(vertices, renderer)
+            Render.DrawFilledTriangle(visible_faces, vertices, renderer)
 
         # Actualiza los ángulos
         angle_x += 0.01
