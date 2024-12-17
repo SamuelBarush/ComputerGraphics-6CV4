@@ -28,3 +28,5 @@ class Ligth:
         ligthIntensityFactor = - (np.dot(normal, light))
         color = Ligth.set_Intensity(color, ligthIntensityFactor)
         return color
+    
+    def ApplyPhongShading()

@@ -64,6 +64,8 @@ def update(obj, angle_x, angle_y, angle_z , camera, light):
            # Aplicar Flat Shading
             # Calcular el vector normal de la cara
             normal = Ligth.CalculateNormal(transformed_v1, transformed_v2, transformed_v3)
+            
+            
             color = Ligth.ApplyFlatShading(normal, color, light)
 
            # Agregar los vértices transformados de la cara visible
@@ -104,7 +106,7 @@ def run():
     obj = OBJLoader('cube.obj')
 
     running = True
-
+    shading_type = 'flat' # Tipo de sombreado 
     angle_x = 0
     angle_y = 0
     angle_z = 0
@@ -112,10 +114,6 @@ def run():
     camera = np.array([0, 0, -5])  # Posición de la cámara
     light = np.array([0, 0, 1])  # Posición de la luz
 
-    # Estados para las funciones
-    draw_edges = False
-    color_faces = False
-    draw_vertices = False
 
     while running:
         for event in sdl2.ext.get_events():
@@ -123,12 +121,12 @@ def run():
                 running = False
                 break
             elif event.type == sdl2.SDL_KEYDOWN:
-                if event.key.keysym.sym == sdl2.SDLK_i:
-                    draw_edges = not draw_edges  # Cambia el estado de dibujar aristas
-                elif event.key.keysym.sym == sdl2.SDLK_f:
-                    color_faces = not color_faces  # Cambia el estado de colorear caras
-                elif event.key.keysym.sym == sdl2.SDLK_v:
-                    draw_vertices = not draw_vertices  # Cambia el estado de dibujar vértices
+                if event.key.keysym.sym == sdl2.SDLK_f:
+                    shading_type = 'flat'  # Cambia el tipo de sombreado a Flat
+                elif event.key.keysym.sym == sdl2.SDLK_g:
+                    shading_type = 'gouraud'  # Cambia el tipo de sombreado a Gouraud
+                elif event.key.keysym.sym == sdl2.SDLK_p:
+                    shading_type = 'phong'
 
         # Limpia la pantalla
         renderer.clear(sdl2.ext.Color(0, 0, 0))
@@ -136,16 +134,7 @@ def run():
         # Actualiza los vértices
         vertices , visible_faces , color = update(obj, angle_x, angle_y, angle_z, camera, light)
 
-        # Dibuja las aristas
-        if draw_edges:
-            Render.render(visible_faces, vertices, renderer)
-
-        # Dibuja los vértices
-        if draw_vertices:
-            Render.draw_vertices(vertices, renderer)
-
         # Dibuja las caras
-        #if color_faces:
         Render.DrawFilledTriangle(visible_faces, vertices, renderer, color)
 
         # Actualiza los ángulos
